@@ -1,26 +1,74 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8">
-  <title>ScamCheck – Schnelltest</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ScamCheck</title>
   <style>
-    body { font-family: Arial; padding: 20px; max-width: 600px; margin: auto; }
-    input, textarea, button { width: 100%; margin-top: 10px; padding: 10px; }
-    #result { margin-top: 20px; font-weight: bold; }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f8f9fa;
+      padding: 2rem;
+      max-width: 600px;
+      margin: auto;
+      color: #333;
+    }
+    h1 {
+      text-align: center;
+      color: #007BFF;
+    }
+    textarea {
+      width: 100%;
+      padding: 1rem;
+      margin-top: 1rem;
+      font-size: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+    button {
+      width: 100%;
+      padding: 0.8rem;
+      margin-top: 1rem;
+      font-size: 1rem;
+      background-color: #007BFF;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    #result {
+      margin-top: 1.5rem;
+      font-size: 1.1rem;
+      font-weight: bold;
+      text-align: center;
+    }
     .low { color: green; }
     .medium { color: orange; }
     .high { color: red; }
+    .report-link {
+      display: block;
+      margin-top: 2rem;
+      text-align: center;
+      text-decoration: none;
+      color: #dc3545;
+      font-weight: bold;
+    }
   </style>
 </head>
 <body>
   <h1>🔍 ScamCheck</h1>
-  <p>Gib eine URL, Telefonnummer oder Nachricht ein:</p>
-  <textarea id="input" rows="5" placeholder="z. B. https://bit.ly/abc123 oder 'Sie haben gewonnen'"></textarea>
+  <p>Gib eine Nachricht, Telefonnummer oder URL ein:</p>
+  <textarea id="input" rows="6" placeholder="z. B. Sie haben gewonnen! Klicken Sie hier..."></textarea>
   <button onclick="checkScam()">Prüfen</button>
   <div id="result"></div>
 
+  <a class="report-link" href="https://forms.gle/fD2xEXAMPLE123" target="_blank">⚠️ Scam melden</a>
+
   <script>
-    const scamKeywords = ["gewonnen", "bit.ly", "jetzt klicken", "überweisen", "dringend", "verifizieren", "kostenlos", "preis"];
+    const scamKeywords = ["gewonnen", "bit.ly", "jetzt klicken", "überweisen", "dringend", "verifizieren", "kostenlos", "preis", "gutschein"];
     const knownScamDomains = ["bit.ly", "tinyurl.com", "freestuff.com"];
 
     function checkScam() {
@@ -37,13 +85,13 @@
 
       const result = document.getElementById("result");
       if (score === 0) {
-        result.innerHTML = "✅ Kein Scam erkannt. Bleib trotzdem wachsam.";
+        result.innerHTML = "✅ Kein Scam erkannt. Bleib wachsam.";
         result.className = "low";
       } else if (score <= 2) {
-        result.innerHTML = "⚠️ Möglicherweise verdächtig. Vorsicht geboten.";
+        result.innerHTML = "⚠️ Möglicherweise verdächtig. Sei vorsichtig!";
         result.className = "medium";
       } else {
-        result.innerHTML = "🚨 Hohe Scam-Wahrscheinlichkeit! Nicht darauf reagieren!";
+        result.innerHTML = "🚨 Hohe Scam-Wahrscheinlichkeit! NICHT antworten!";
         result.className = "high";
       }
     }
