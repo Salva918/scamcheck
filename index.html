@@ -2,99 +2,108 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ScamCheck</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Discord ScamCheck</title>
   <style>
     body {
-      font-family: 'Segoe UI', sans-serif;
-      background: #f8f9fa;
+      font-family: Arial, sans-serif;
+      background: #f0f2f5;
       padding: 2rem;
-      max-width: 600px;
+      max-width: 800px;
       margin: auto;
-      color: #333;
     }
     h1 {
       text-align: center;
-      color: #007BFF;
+      color: #5865F2;
     }
-    textarea {
+    input {
       width: 100%;
       padding: 1rem;
-      margin-top: 1rem;
       font-size: 1rem;
+      margin-top: 1rem;
+      border-radius: 8px;
       border: 1px solid #ccc;
-      border-radius: 8px;
     }
-    button {
+    table {
       width: 100%;
-      padding: 0.8rem;
-      margin-top: 1rem;
-      font-size: 1rem;
-      background-color: #007BFF;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-    }
-    button:hover {
-      background-color: #0056b3;
-    }
-    #result {
-      margin-top: 1.5rem;
-      font-size: 1.1rem;
-      font-weight: bold;
-      text-align: center;
-    }
-    .low { color: green; }
-    .medium { color: orange; }
-    .high { color: red; }
-    .report-link {
-      display: block;
+      border-collapse: collapse;
       margin-top: 2rem;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 0.8rem;
+      text-align: left;
+    }
+    th {
+      background: #5865F2;
+      color: white;
+    }
+    .warn {
+      color: red;
+      font-weight: bold;
+      margin-top: 1rem;
+    }
+    .safe {
+      color: green;
+      margin-top: 1rem;
+    }
+    .report-btn {
+      margin-top: 2rem;
+      display: block;
+      background: #dc3545;
+      color: white;
       text-align: center;
+      padding: 1rem;
       text-decoration: none;
-      color: #dc3545;
+      border-radius: 8px;
       font-weight: bold;
     }
   </style>
 </head>
 <body>
-  <h1>🔍 ScamCheck</h1>
-  <p>Gib eine Nachricht, Telefonnummer oder URL ein:</p>
-  <textarea id="input" rows="6" placeholder="z. B. Sie haben gewonnen! Klicken Sie hier..."></textarea>
-  <button onclick="checkScam()">Prüfen</button>
-  <div id="result"></div>
+  <h1>🛡️ Discord ScamCheck</h1>
+  <p>Gib einen Discord-Namen ein (z. B. `FakeNitro#1234` oder `@scammeruser`) um zu prüfen:</p>
+  <input type="text" id="nameInput" placeholder="Discord-Name eingeben…" oninput="checkName()" />
+  <div id="checkResult"></div>
 
-  <a class="report-link" href="https://forms.gle/fD2xEXAMPLE123" target="_blank">⚠️ Scam melden</a>
+  <h2>⚠️ Gemeldete Discord-Scammer</h2>
+  <table id="scamTable">
+    <thead>
+      <tr>
+        <th>Discord-Name</th>
+        <th>Masche</th>
+        <th>Gemeldet am</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>FakeNitro#8801</td><td>Nitro Giveaway Scam</td><td>25.07.2025</td></tr>
+      <tr><td>@CryptoKing</td><td>Krypto-Trading Betrug</td><td>23.07.2025</td></tr>
+      <tr><td>FreundHilfe#0001</td><td>Ich brauche Geld!</td><td>22.07.2025</td></tr>
+    </tbody>
+  </table>
+
+  <a class="report-btn" href="https://forms.gle/DEIN-LINK" target="_blank">⚠️ Neuen Discord-Scammer melden</a>
 
   <script>
-    const scamKeywords = ["gewonnen", "bit.ly", "jetzt klicken", "überweisen", "dringend", "verifizieren", "kostenlos", "preis", "gutschein"];
-    const knownScamDomains = ["bit.ly", "tinyurl.com", "freestuff.com"];
+    const scammers = [
+      { name: "FakeNitro#8801", method: "Nitro Giveaway Scam", date: "25.07.2025" },
+      { name: "@CryptoKing", method: "Krypto-Trading Betrug", date: "23.07.2025" },
+      { name: "FreundHilfe#0001", method: "Ich brauche Geld!", date: "22.07.2025" }
+    ];
 
-    function checkScam() {
-      const input = document.getElementById("input").value.toLowerCase();
-      let score = 0;
-
-      scamKeywords.forEach(word => {
-        if (input.includes(word)) score += 1;
-      });
-
-      knownScamDomains.forEach(domain => {
-        if (input.includes(domain)) score += 2;
-      });
-
-      const result = document.getElementById("result");
-      if (score === 0) {
-        result.innerHTML = "✅ Kein Scam erkannt. Bleib wachsam.";
-        result.className = "low";
-      } else if (score <= 2) {
-        result.innerHTML = "⚠️ Möglicherweise verdächtig. Sei vorsichtig!";
-        result.className = "medium";
+    function checkName() {
+      const input = document.getElementById("nameInput").value.trim().toLowerCase();
+      const result = document.getElementById("checkResult");
+      const match = scammers.find(s => s.name.toLowerCase() === input);
+      if (match) {
+        result.innerHTML = `<p class="warn">⛔ Achtung! ${match.name} ist ein bekannter Scammer (Masche: ${match.method})</p>`;
+      } else if (input.length > 3) {
+        result.innerHTML = `<p class="safe">✅ Kein bekannter Scam-Name. Trotzdem wachsam bleiben!</p>`;
       } else {
-        result.innerHTML = "🚨 Hohe Scam-Wahrscheinlichkeit! NICHT antworten!";
-        result.className = "high";
+        result.innerHTML = "";
       }
     }
   </script>
 </body>
 </html>
+
