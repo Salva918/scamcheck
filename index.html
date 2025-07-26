@@ -7,12 +7,12 @@
   <style>
     body {
       font-family: Arial, sans-serif;
-      background: #f0f2f5;
+      background: #f5f7fa;
       padding: 2rem;
-      max-width: 800px;
+      max-width: 900px;
       margin: auto;
     }
-    h1 {
+    h1, h2 {
       text-align: center;
       color: #5865F2;
     }
@@ -24,20 +24,6 @@
       border-radius: 8px;
       border: 1px solid #ccc;
     }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 2rem;
-    }
-    th, td {
-      border: 1px solid #ddd;
-      padding: 0.8rem;
-      text-align: left;
-    }
-    th {
-      background: #5865F2;
-      color: white;
-    }
     .warn {
       color: red;
       font-weight: bold;
@@ -47,12 +33,20 @@
       color: green;
       margin-top: 1rem;
     }
-    .report-btn {
+    iframe {
+      border: none;
+      width: 100%;
+      height: 600px;
       margin-top: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    .btn {
       display: block;
-      background: #dc3545;
-      color: white;
       text-align: center;
+      margin-top: 2rem;
+      background-color: #dc3545;
+      color: white;
       padding: 1rem;
       text-decoration: none;
       border-radius: 8px;
@@ -62,41 +56,32 @@
 </head>
 <body>
   <h1>🛡️ Discord ScamCheck</h1>
-  <p>Gib einen Discord-Namen ein (z. B. `FakeNitro#1234` oder `@scammeruser`) um zu prüfen:</p>
+
+  <h2>🔍 Discord-Name prüfen</h2>
+  <p>Gib einen Namen ein (z. B. `FakeNitro#1234`) und prüfe, ob er bereits gemeldet wurde:</p>
   <input type="text" id="nameInput" placeholder="Discord-Name eingeben…" oninput="checkName()" />
   <div id="checkResult"></div>
 
-  <h2>⚠️ Gemeldete Discord-Scammer</h2>
-  <table id="scamTable">
-    <thead>
-      <tr>
-        <th>Discord-Name</th>
-        <th>Masche</th>
-        <th>Gemeldet am</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr><td>FakeNitro#8801</td><td>Nitro Giveaway Scam</td><td>25.07.2025</td></tr>
-      <tr><td>@CryptoKing</td><td>Krypto-Trading Betrug</td><td>23.07.2025</td></tr>
-      <tr><td>FreundHilfe#0001</td><td>Ich brauche Geld!</td><td>22.07.2025</td></tr>
-    </tbody>
-  </table>
+  <h2>📄 Live gemeldete Discord-Scammer</h2>
+  <p style="text-align:center">Diese Tabelle wird automatisch aus dem Meldeformular geladen.</p>
 
-  <a class="report-btn" href="https://forms.gle/DEIN-LINK" target="_blank">⚠️ Neuen Discord-Scammer melden</a>
+  <iframe src="https://docs.google.com/spreadsheets/d/e/2PACX-1vQkqlC6ZpUaeZetn9x-qcsxYTWtxPLOaTj6Vlm_HOspdlLKc-L4qqjVL5DCLcJh7A/pubhtml?widget=true&amp;headers=false"></iframe>
+
+  <a class="btn" href="https://forms.gle/YOUR-FORM-LINK" target="_blank">⚠️ Neuen Scam melden</a>
 
   <script>
     const scammers = [
-      { name: "FakeNitro#8801", method: "Nitro Giveaway Scam", date: "25.07.2025" },
-      { name: "@CryptoKing", method: "Krypto-Trading Betrug", date: "23.07.2025" },
-      { name: "FreundHilfe#0001", method: "Ich brauche Geld!", date: "22.07.2025" }
+      "FakeNitro#8801",
+      "@CryptoKing",
+      "FreundHilfe#0001"
     ];
 
     function checkName() {
       const input = document.getElementById("nameInput").value.trim().toLowerCase();
       const result = document.getElementById("checkResult");
-      const match = scammers.find(s => s.name.toLowerCase() === input);
+      const match = scammers.find(name => name.toLowerCase() === input);
       if (match) {
-        result.innerHTML = `<p class="warn">⛔ Achtung! ${match.name} ist ein bekannter Scammer (Masche: ${match.method})</p>`;
+        result.innerHTML = `<p class="warn">⛔ Achtung! ${match} wurde bereits als Scammer gemeldet!</p>`;
       } else if (input.length > 3) {
         result.innerHTML = `<p class="safe">✅ Kein bekannter Scam-Name. Trotzdem wachsam bleiben!</p>`;
       } else {
@@ -106,4 +91,3 @@
   </script>
 </body>
 </html>
-
