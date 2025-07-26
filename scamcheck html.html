@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>ScamCheck – Schnelltest</title>
+  <style>
+    body { font-family: Arial; padding: 20px; max-width: 600px; margin: auto; }
+    input, textarea, button { width: 100%; margin-top: 10px; padding: 10px; }
+    #result { margin-top: 20px; font-weight: bold; }
+    .low { color: green; }
+    .medium { color: orange; }
+    .high { color: red; }
+  </style>
+</head>
+<body>
+  <h1>🔍 ScamCheck</h1>
+  <p>Gib eine URL, Telefonnummer oder Nachricht ein:</p>
+  <textarea id="input" rows="5" placeholder="z. B. https://bit.ly/abc123 oder 'Sie haben gewonnen'"></textarea>
+  <button onclick="checkScam()">Prüfen</button>
+  <div id="result"></div>
+
+  <script>
+    const scamKeywords = ["gewonnen", "bit.ly", "jetzt klicken", "überweisen", "dringend", "verifizieren", "kostenlos", "preis"];
+    const knownScamDomains = ["bit.ly", "tinyurl.com", "freestuff.com"];
+
+    function checkScam() {
+      const input = document.getElementById("input").value.toLowerCase();
+      let score = 0;
+
+      scamKeywords.forEach(word => {
+        if (input.includes(word)) score += 1;
+      });
+
+      knownScamDomains.forEach(domain => {
+        if (input.includes(domain)) score += 2;
+      });
+
+      const result = document.getElementById("result");
+      if (score === 0) {
+        result.innerHTML = "✅ Kein Scam erkannt. Bleib trotzdem wachsam.";
+        result.className = "low";
+      } else if (score <= 2) {
+        result.innerHTML = "⚠️ Möglicherweise verdächtig. Vorsicht geboten.";
+        result.className = "medium";
+      } else {
+        result.innerHTML = "🚨 Hohe Scam-Wahrscheinlichkeit! Nicht darauf reagieren!";
+        result.className = "high";
+      }
+    }
+  </script>
+</body>
+</html>
