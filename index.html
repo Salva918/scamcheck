@@ -1,93 +1,79 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
   <title>Discord ScamCheck</title>
   <style>
     body {
+      background: #f7f9fc;
       font-family: Arial, sans-serif;
-      background: #f5f7fa;
-      padding: 2rem;
-      max-width: 900px;
-      margin: auto;
-    }
-    h1, h2 {
       text-align: center;
-      color: #5865F2;
+      padding: 50px;
+    }
+    h1 {
+      color: #2e6ddf;
     }
     input {
-      width: 100%;
-      padding: 1rem;
-      font-size: 1rem;
-      margin-top: 1rem;
+      padding: 10px;
+      font-size: 16px;
+      width: 300px;
+      margin-top: 10px;
+    }
+    button {
+      margin-top: 20px;
+      background-color: #d93025;
+      color: white;
+      padding: 12px 25px;
+      font-size: 16px;
+      border: none;
       border-radius: 8px;
-      border: 1px solid #ccc;
+      cursor: pointer;
     }
-    .warn {
-      color: red;
-      font-weight: bold;
-      margin-top: 1rem;
-    }
-    .safe {
-      color: green;
-      margin-top: 1rem;
+    button:hover {
+      background-color: #b3261e;
     }
     iframe {
+      margin-top: 40px;
       border: none;
-      width: 100%;
-      height: 600px;
-      margin-top: 2rem;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    }
-    .btn {
-      display: block;
-      text-align: center;
-      margin-top: 2rem;
-      background-color: #dc3545;
-      color: white;
-      padding: 1rem;
-      text-decoration: none;
-      border-radius: 8px;
-      font-weight: bold;
+      width: 90%;
+      height: 400px;
     }
   </style>
 </head>
 <body>
-  <h1>🛡️ Discord ScamCheck</h1>
+  <h1>🔎 Discord ScamCheck</h1>
+  <p>Gib einen Discord-Namen ein (z. B. <strong>FakeNitro#1234</strong>) und prüfe, ob er gemeldet wurde:</p>
 
-  <h2>🔍 Discord-Name prüfen</h2>
-  <p>Gib einen Namen ein (z. B. <code>FakeNitro#1234</code>) und prüfe, ob er bereits gemeldet wurde:</p>
-  <input type="text" id="nameInput" placeholder="Discord-Name eingeben…" oninput="checkName()" />
-  <div id="checkResult"></div>
+  <input type="text" id="inputName" placeholder="Discord-Name eingeben">
+  <div id="result"></div>
 
-  <h2>📄 Live gemeldete Discord-Scammer</h2>
-  <p style="text-align:center">Diese Tabelle wird automatisch aus dem Meldeformular geladen.</p>
+  <br><br>
 
-  <iframe src="https://docs.google.com/spreadsheets/d/e/2PACX-1vTX7d3ZJzGjB8pQERi1TcWKWgbMGdkUA2gXhh6dsbd5AFEEbwliuAX17rwH_Y74KK72kOQv8LWcQxMr/pubhtml?gid=1952854378&single=true&widget=true&headers=false"></iframe>
+  <a href="https://docs.google.com/forms/d/e/1FAIpQLSdNy8sRphe12V0VOcxyFRlwlrid3KCg72HlWtlKpcLNY9b_-A/viewform" target="_blank">
+    <button>⚠️ Neuen Scam melden</button>
+  </a>
 
-  <a class="btn" href="https://forms.gle/abc123xyz456" target="_blank">⚠️ Neuen Scam melden</a>
+  <iframe src="https://docs.google.com/spreadsheets/d/e/2PACX-1vTX7d3ZJzGjB8pQERi1TcWKWgbMGdkUA2gXhh6dsbd5AFEEbwliuAX17rwH_Y74KK72kOQv8LWcQxMr/pubhtml?gid=1952854378&amp;single=true&amp;widget=true&amp;headers=false"></iframe>
 
   <script>
-    const scammers = [
-      "FakeNitro#8801",
-      "@CryptoKing",
-      "FreundHilfe#0001"
-    ];
+    const scamNames = ["FakeNitro#1234", "BotSpam#5678", "Giveaway123#0001"];
+    document.getElementById("inputName").addEventListener("input", () => {
+      const input = document.getElementById("inputName").value.trim();
+      const result = document.getElementById("result");
 
-    function checkName() {
-      const input = document.getElementById("nameInput").value.trim().toLowerCase();
-      const result = document.getElementById("checkResult");
-      const match = scammers.find(name => name.toLowerCase() === input);
-      if (match) {
-        result.innerHTML = `<p class="warn">⛔ Achtung! ${match} wurde bereits als Scammer gemeldet!</p>`;
-      } else if (input.length > 3) {
-        result.innerHTML = `<p class="safe">✅ Kein bekannter Scam-Name. Trotzdem wachsam bleiben!</p>`;
-      } else {
+      if (!input) {
         result.innerHTML = "";
+        return;
       }
-    }
+
+      const isScammer = scamNames.some(name => name.toLowerCase() === input.toLowerCase());
+
+      if (isScammer) {
+        result.innerHTML = "<p style='color:red'><strong>⚠️ Achtung: Gemeldeter Scam!</strong></p>";
+      } else {
+        result.innerHTML = "<p style='color:green'>✅ Kein bekannter Scam. Bleib trotzdem wachsam!</p>";
+      }
+    });
   </script>
 </body>
 </html>
