@@ -2,44 +2,127 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Discord ScamCheck</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background: #f7f9fc;
+      font-family: "Segoe UI", sans-serif;
+      background: linear-gradient(to right, #e3f2fd, #bbdefb);
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    header {
+      background-color: #1e88e5;
+      color: white;
+      width: 100%;
+      padding: 20px;
       text-align: center;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 32px;
+    }
+
+    .container {
+      background: white;
+      margin-top: 40px;
       padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+      max-width: 600px;
+      width: 90%;
+      text-align: center;
     }
-    h1 {
-      color: #2a6ddf;
-    }
+
     input {
-      padding: 10px;
-      width: 250px;
+      padding: 12px;
+      width: 80%;
+      max-width: 300px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
       font-size: 16px;
     }
+
     button {
-      padding: 10px 20px;
-      background: #2a6ddf;
+      padding: 12px 20px;
+      margin-left: 10px;
+      background: #1e88e5;
       color: white;
       border: none;
+      border-radius: 6px;
+      font-size: 16px;
       cursor: pointer;
-      margin-left: 10px;
+      transition: 0.3s ease;
     }
+
+    button:hover {
+      background: #1565c0;
+    }
+
     .result {
-      margin-top: 20px;
+      margin-top: 25px;
+      font-size: 18px;
       font-weight: bold;
+    }
+
+    .success {
+      color: #388e3c;
+    }
+
+    .warning {
+      color: #d32f2f;
+    }
+
+    .footer {
+      margin-top: 50px;
+      text-align: center;
+    }
+
+    .report-btn {
+      margin-top: 30px;
+      background-color: #d32f2f;
+      text-decoration: none;
+      padding: 12px 20px;
+      color: white;
+      border-radius: 6px;
+      display: inline-block;
+      font-weight: bold;
+    }
+
+    .report-btn:hover {
+      background-color: #b71c1c;
     }
   </style>
 </head>
 <body>
-  <h1>🔍 Discord ScamCheck</h1>
-  <p>Gib einen Discord-Namen ein (z. B. <b>FakeNitro#1234</b>)</p>
 
-  <input type="text" id="nameInput" placeholder="Discord-Name">
-  <button onclick="checkName()">Prüfen</button>
+  <header>
+    <h1>🔍 Discord ScamCheck</h1>
+    <p>Live-Prüfung gemeldeter Scam-Namen</p>
+  </header>
 
-  <div class="result" id="resultText"></div>
+  <div class="container">
+    <p>Gib den <b>Discord-Namen</b> ein (z. B. <code>FakeNitro#1234</code>):</p>
+
+    <input type="text" id="nameInput" placeholder="Discord-Name eingeben">
+    <button onclick="checkName()">Prüfen</button>
+
+    <div class="result" id="resultText"></div>
+
+    <a href="https://docs.google.com/forms/d/e/1FAIpQLSdNy8sRphe12V0VOcxyFRlwlrid3KCg72HlWtlKpcLNY9b_-A/viewform" target="_blank" class="report-btn">
+      ⚠️ Neuen Scam melden
+    </a>
+  </div>
+
+  <div class="footer">
+    <p>🔗 Datenquelle: Google Sheets</p>
+  </div>
 
   <script>
     async function checkName() {
@@ -47,34 +130,35 @@
       const resultDiv = document.getElementById("resultText");
 
       if (!input) {
-        resultDiv.innerText = "❗ Bitte gib einen Namen ein.";
-        resultDiv.style.color = "orange";
+        resultDiv.textContent = "❗ Bitte gib einen Discord-Namen ein.";
+        resultDiv.className = "result warning";
         return;
       }
 
-      resultDiv.innerText = "🔄 Suche...";
-      resultDiv.style.color = "black";
+      resultDiv.textContent = "🔄 Suche...";
+      resultDiv.className = "result";
 
       try {
         const response = await fetch("https://docs.google.com/spreadsheets/d/e/2PACX-1vTX7d3ZJzGjB8pQERi1TcWKWgbMGdkUA2gXhh6dsbd5AFEEbwliuAX17rwH_Y74KK72kOQv8LWcQxMr/pub?output=csv");
         const data = await response.text();
-        const rows = data.split("\n").slice(1); // Überschrift überspringen
+        const rows = data.split("\n").slice(1); // Skip header
 
         const found = rows.some(row => row.toLowerCase().includes(input));
 
         if (found) {
-          resultDiv.innerText = "⚠️ Dieser Discord-Name wurde bereits als Scam gemeldet!";
-          resultDiv.style.color = "red";
+          resultDiv.innerHTML = "⚠️ <span style='color: red;'>Scammer gemeldet!</span><br>Sei vorsichtig bei diesem Kontakt.";
+          resultDiv.className = "result warning";
         } else {
-          resultDiv.innerText = "✅ Kein bekannter Scam – bleib trotzdem vorsichtig!";
-          resultDiv.style.color = "green";
+          resultDiv.innerHTML = "✅ <span style='color: green;'>Kein bekannter Scam.</span><br>Bleib trotzdem wachsam!";
+          resultDiv.className = "result success";
         }
 
       } catch (error) {
-        resultDiv.innerText = "❌ Fehler beim Laden der Daten.";
-        resultDiv.style.color = "red";
+        resultDiv.textContent = "❌ Fehler beim Laden der Daten.";
+        resultDiv.className = "result warning";
       }
     }
   </script>
+
 </body>
 </html>
