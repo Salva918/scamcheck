@@ -5,75 +5,76 @@
   <title>Discord ScamCheck</title>
   <style>
     body {
-      background: #f7f9fc;
       font-family: Arial, sans-serif;
+      background: #f7f9fc;
       text-align: center;
-      padding: 50px;
+      padding: 30px;
     }
     h1 {
-      color: #2e6ddf;
+      color: #2a6ddf;
     }
     input {
       padding: 10px;
+      width: 250px;
       font-size: 16px;
-      width: 300px;
-      margin-top: 10px;
     }
     button {
-      margin-top: 20px;
-      background-color: #d93025;
+      padding: 10px 20px;
+      background: #2a6ddf;
       color: white;
-      padding: 12px 25px;
-      font-size: 16px;
       border: none;
-      border-radius: 8px;
       cursor: pointer;
+      margin-left: 10px;
     }
-    button:hover {
-      background-color: #b3261e;
-    }
-    iframe {
-      margin-top: 40px;
-      border: none;
-      width: 90%;
-      height: 400px;
+    .result {
+      margin-top: 20px;
+      font-weight: bold;
     }
   </style>
 </head>
 <body>
-  <h1>🔎 Discord ScamCheck</h1>
-  <p>Gib einen Discord-Namen ein (z. B. <strong>FakeNitro#1234</strong>) und prüfe, ob er gemeldet wurde:</p>
+  <h1>🔍 Discord ScamCheck</h1>
+  <p>Gib einen Discord-Namen ein (z. B. <b>FakeNitro#1234</b>)</p>
 
-  <input type="text" id="inputName" placeholder="Discord-Name eingeben">
-  <div id="result"></div>
+  <input type="text" id="nameInput" placeholder="Discord-Name">
+  <button onclick="checkName()">Prüfen</button>
 
-  <br><br>
-
-  <a href="https://docs.google.com/forms/d/e/1FAIpQLSdNy8sRphe12V0VOcxyFRlwlrid3KCg72HlWtlKpcLNY9b_-A/viewform" target="_blank">
-    <button>⚠️ Neuen Scam melden</button>
-  </a>
-
-  <iframe src="https://docs.google.com/spreadsheets/d/e/2PACX-1vTX7d3ZJzGjB8pQERi1TcWKWgbMGdkUA2gXhh6dsbd5AFEEbwliuAX17rwH_Y74KK72kOQv8LWcQxMr/pubhtml?gid=1952854378&amp;single=true&amp;widget=true&amp;headers=false"></iframe>
+  <div class="result" id="resultText"></div>
 
   <script>
-    const scamNames = ["FakeNitro#1234", "BotSpam#5678", "Giveaway123#0001"];
-    document.getElementById("inputName").addEventListener("input", () => {
-      const input = document.getElementById("inputName").value.trim();
-      const result = document.getElementById("result");
+    async function checkName() {
+      const input = document.getElementById("nameInput").value.trim().toLowerCase();
+      const resultDiv = document.getElementById("resultText");
 
       if (!input) {
-        result.innerHTML = "";
+        resultDiv.innerText = "❗ Bitte gib einen Namen ein.";
+        resultDiv.style.color = "orange";
         return;
       }
 
-      const isScammer = scamNames.some(name => name.toLowerCase() === input.toLowerCase());
+      resultDiv.innerText = "🔄 Suche...";
+      resultDiv.style.color = "black";
 
-      if (isScammer) {
-        result.innerHTML = "<p style='color:red'><strong>⚠️ Achtung: Gemeldeter Scam!</strong></p>";
-      } else {
-        result.innerHTML = "<p style='color:green'>✅ Kein bekannter Scam. Bleib trotzdem wachsam!</p>";
+      try {
+        const response = await fetch("https://docs.google.com/spreadsheets/d/e/2PACX-1vTX7d3ZJzGjB8pQERi1TcWKWgbMGdkUA2gXhh6dsbd5AFEEbwliuAX17rwH_Y74KK72kOQv8LWcQxMr/pub?output=csv");
+        const data = await response.text();
+        const rows = data.split("\n").slice(1); // Überschrift überspringen
+
+        const found = rows.some(row => row.toLowerCase().includes(input));
+
+        if (found) {
+          resultDiv.innerText = "⚠️ Dieser Discord-Name wurde bereits als Scam gemeldet!";
+          resultDiv.style.color = "red";
+        } else {
+          resultDiv.innerText = "✅ Kein bekannter Scam – bleib trotzdem vorsichtig!";
+          resultDiv.style.color = "green";
+        }
+
+      } catch (error) {
+        resultDiv.innerText = "❌ Fehler beim Laden der Daten.";
+        resultDiv.style.color = "red";
       }
-    });
+    }
   </script>
 </body>
 </html>
